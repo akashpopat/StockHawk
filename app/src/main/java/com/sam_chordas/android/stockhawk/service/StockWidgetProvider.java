@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.RemoteViews;
@@ -28,16 +27,15 @@ public class StockWidgetProvider extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.stock_widget);
 
             // Create an Intent to launch MainActivity
-            Intent intent = new Intent(context, MyStocksActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            Intent pIntent = new Intent(context, MyStocksActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, pIntent, 0);
             views.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
             // Set up the collection
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                setRemoteAdapter(context, views);
-            } else {
-                setRemoteAdapterV11(context, views);
-            }
+            Intent intent = new Intent(context, DetailWidgetRemoteViewsService.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            views.setRemoteAdapter(R.id.widget_list,
+                    intent);
 
             Intent clickIntentTemplate =  new Intent(context, DetailsActivity.class);
             PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
@@ -49,6 +47,7 @@ public class StockWidgetProvider extends AppWidgetProvider {
             // Tell the AppWidgetManager to perform an update on the current app widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
+        super.onUpdate(context,appWidgetManager,appWidgetIds);
     }
 
     @Override
@@ -59,18 +58,12 @@ public class StockWidgetProvider extends AppWidgetProvider {
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list);
+//            onUpdate(context,appWidgetManager,appWidgetIds);
         }
     }
 
-    private void setRemoteAdapter(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(R.id.widget_list,
-                new Intent(context, DetailWidgetRemoteViewsService.class));
-    }
 
-    private void setRemoteAdapterV11(Context context, @NonNull final RemoteViews views) {
-        views.setRemoteAdapter(0, R.id.widget_list,
-                new Intent(context, DetailWidgetRemoteViewsService.class));
-    }
+
 
     @Override
     public void onEnabled(Context context) {
