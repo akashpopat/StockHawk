@@ -11,4 +11,9 @@
     <string name="input_prefill"></string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
     <string name="already_saved_stock_error">This stock is already saved!</string>
+    <string name="five_years_weekly">5y/weekly</string>
+    <string name="add_stock">Add stock</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="empty_forecast_list">No stocks!</string>
 </resources>

@@ -2,6 +2,7 @@ package com.sam_chordas.android.stockhawk.service;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -14,9 +15,6 @@ import com.google.android.gms.gcm.TaskParams;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +22,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by sam_chordas on 9/30/15.
@@ -37,6 +39,8 @@ public class StockTaskService extends GcmTaskService{
   private Context mContext;
   private StringBuilder mStoredSymbols = new StringBuilder();
   private boolean isUpdate;
+  public static final String ACTION_DATA_UPDATED =
+          "com.sam_chordas.android.stockhawk.ACTION_DATA_UPDATED";
 
   public StockTaskService(){}
 
@@ -138,6 +142,8 @@ public class StockTaskService extends GcmTaskService{
           }
           mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
               Utils.quoteJsonToContentVals(getResponse));
+
+          updateWidgets();
         }catch (RemoteException | OperationApplicationException e){
           Log.e(LOG_TAG, "Error applying batch insert", e);
         }
@@ -147,6 +153,13 @@ public class StockTaskService extends GcmTaskService{
     }
 
     return result;
+  }
+  private void updateWidgets() {
+    Context context = mContext;
+    // Setting the package ensures that only components in our app will receive the broadcast
+    Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+            .setPackage(context.getPackageName());
+    context.sendBroadcast(dataUpdatedIntent);
   }
 
 }
