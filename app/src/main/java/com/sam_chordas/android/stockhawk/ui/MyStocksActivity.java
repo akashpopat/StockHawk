@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Html;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.Menu;
@@ -104,11 +105,13 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
           new MaterialDialog.Builder(mContext).title(R.string.symbol_search)
               .content(R.string.content_test)
               .inputType(InputType.TYPE_CLASS_TEXT)
+
+                  .backgroundColor(getResources().getColor(android.R.color.black))
               .input(R.string.input_hint, R.string.input_prefill, new MaterialDialog.InputCallback() {
                 @Override public void onInput(MaterialDialog dialog, CharSequence input) {
                   // On FAB click, receive user input. Make sure the stock doesn't already exist
                   // in the DB and proceed accordingly
-                  input = input.toString().toUpperCase();
+                  input = Html.escapeHtml(input.toString()).toUpperCase();
                   Cursor c = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
                       new String[] { QuoteColumns.SYMBOL }, QuoteColumns.SYMBOL + "= ?",
                       new String[] { input.toString() }, null);

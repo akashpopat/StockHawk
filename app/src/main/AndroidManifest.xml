@@ -3,9 +3,10 @@
     package="com.sam_chordas.android.stockhawk">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <permission
         android:name="com.google.android.gcm.demo.permission.C2D_MESSAGE"
@@ -42,11 +43,11 @@
         <provider
             android:name=".data.generated.QuoteProvider"
             android:authorities="com.sam_chordas.android.stockhawk.data.QuoteProvider"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity android:name=".ui.DetailsActivity" />
 
-        <receiver android:name=".service.StockWidgetProvider">
+        <receiver android:name=".widget.StockWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.sam_chordas.android.stockhawk.ACTION_DATA_UPDATED"/>
@@ -56,6 +57,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/stock_widget_info" />
         </receiver>
+
+        <service android:name=".widget.DetailWidgetRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>

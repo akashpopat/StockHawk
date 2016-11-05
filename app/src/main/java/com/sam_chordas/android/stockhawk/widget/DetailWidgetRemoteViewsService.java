@@ -1,9 +1,8 @@
-package com.sam_chordas.android.stockhawk.service;
+package com.sam_chordas.android.stockhawk.widget;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Binder;
 import android.os.Build;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
@@ -38,13 +37,11 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
                 // However, our ContentProvider is not exported so it doesn't have access to the
                 // data. Therefore we need to clear (and finally restore) the calling identity so
                 // that calls use our process and permission
-                final long identityToken = Binder.clearCallingIdentity();
                 data = getContentResolver().query(QuoteProvider.Quotes.CONTENT_URI,
-                        new String[] {QuoteColumns.SYMBOL,QuoteColumns.BIDPRICE,QuoteColumns.CHANGE, QuoteColumns._ID},
+                        new String[] {"Distinct "+ QuoteColumns.SYMBOL,QuoteColumns.BIDPRICE,QuoteColumns.CHANGE, QuoteColumns._ID},
                         null,
                         null,
                         null);
-                Binder.restoreCallingIdentity(identityToken);
             }
 
             @Override
@@ -102,14 +99,12 @@ public class DetailWidgetRemoteViewsService extends RemoteViewsService {
 
             @Override
             public long getItemId(int position) {
-                if (data.moveToPosition(position))
-                    return data.getLong(3);
                 return position;
             }
 
             @Override
             public boolean hasStableIds() {
-                return true;
+                return false;
             }
         };
     }
